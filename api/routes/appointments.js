@@ -272,6 +272,17 @@ router.put('/:id', (req, res) => {
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  */
+router.delete('/:id', (req, res) => {
+  const index = appointments.findIndex(a => a.id === req.params.id);
+
+  if (index === -1) {
+    return res.status(404).json({ message: `Appointment with ID ${req.params.id} not found.`, code: 'APPOINTMENT_NOT_FOUND' });
+  }
+
+  appointments.splice(index, 1);
+
+  res.status(204).send();
+});
 
 /**
  * @swagger
