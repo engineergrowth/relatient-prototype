@@ -1,0 +1,558 @@
+openapi: 3.0.0
+info:
+  title: Relatient API Prototype
+  version: 1.0.0
+  description: >-
+    A sample API for demonstrating Relatient's scheduling and patient management
+    capabilities.
+servers:
+  - url: https://relatient-production.up.railway.app
+    description: Production / Live API Server
+  - url: http://localhost:3000
+    description: Local development server
+paths:
+  /appointments:
+    get:
+      summary: Retrieve a list of all appointments
+      description: >-
+        Returns a comprehensive list of all scheduled appointments within the
+        system.
+      tags:
+        - Appointments
+      responses:
+        '200':
+          description: A successful response with a list of appointments.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Appointment'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    post:
+      summary: Create a new appointment
+      tags:
+        - Appointments
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - patientId
+                - providerId
+                - date
+                - type
+              properties:
+                patientId:
+                  type: string
+                  example: pat1
+                providerId:
+                  type: string
+                  example: prov1
+                date:
+                  type: string
+                  format: date-time
+                  example: '2025-06-15T10:00:00Z'
+                type:
+                  type: string
+                  example: Check-up
+      responses:
+        '201':
+          description: Appointment created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Appointment'
+        '400':
+          description: Invalid input.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /appointments/{id}:
+    get:
+      summary: Get a specific appointment by ID
+      description: >-
+        Retrieves the details of a single appointment using its unique
+        identifier.
+      tags:
+        - Appointments
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            example: app1
+          description: The unique identifier of the appointment.
+      responses:
+        '200':
+          description: Appointment found and returned successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Appointment'
+        '404':
+          description: Appointment not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    put:
+      summary: Update an existing appointment
+      tags:
+        - Appointments
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            example: app1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                patientId:
+                  type: string
+                providerId:
+                  type: string
+                date:
+                  type: string
+                  format: date-time
+                type:
+                  type: string
+                status:
+                  type: string
+      responses:
+        '200':
+          description: Appointment updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Appointment'
+        '400':
+          description: Invalid input.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Appointment not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      summary: Delete an appointment
+      tags:
+        - Appointments
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            example: app1
+      responses:
+        '204':
+          description: Appointment successfully deleted.
+        '404':
+          description: Appointment not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /patients:
+    get:
+      summary: Retrieve a list of all patients
+      description: Returns a comprehensive list of all registered patients in the system.
+      tags:
+        - Patients
+      responses:
+        '200':
+          description: A successful response with a list of patients.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Patient'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    post:
+      summary: Create a new patient
+      description: Registers a new patient in the system.
+      tags:
+        - Patients
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - firstName
+                - lastName
+                - dateOfBirth
+              properties:
+                firstName:
+                  type: string
+                  example: Alice
+                lastName:
+                  type: string
+                  example: Smith
+                dateOfBirth:
+                  type: string
+                  format: date
+                  example: '1990-01-01'
+                contactNumber:
+                  type: string
+                  example: 555-111-2222
+                email:
+                  type: string
+                  example: alice@example.com
+      responses:
+        '201':
+          description: Patient created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Patient'
+        '400':
+          description: Missing required fields.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /patients/{id}:
+    get:
+      summary: Get a specific patient by ID
+      description: Retrieves the detailed information of a single patient using their ID.
+      tags:
+        - Patients
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            example: pat1
+          description: The patient ID.
+      responses:
+        '200':
+          description: Patient retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Patient'
+        '404':
+          description: Patient not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    put:
+      summary: Update a patient's information
+      description: Updates an existing patient record.
+      tags:
+        - Patients
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            example: pat1
+          description: The patient ID.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                dateOfBirth:
+                  type: string
+                  format: date
+                contactNumber:
+                  type: string
+                email:
+                  type: string
+      responses:
+        '200':
+          description: Patient updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Patient'
+        '404':
+          description: Patient not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      summary: Delete a patient
+      description: Deletes a patient record by ID.
+      tags:
+        - Patients
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            example: pat1
+          description: The patient ID.
+      responses:
+        '204':
+          description: Patient successfully deleted.
+        '404':
+          description: Patient not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /providers:
+    get:
+      summary: Retrieve a list of all healthcare providers
+      description: >-
+        Returns a comprehensive list of all registered healthcare providers in
+        the system.
+      tags:
+        - Providers
+      responses:
+        '200':
+          description: A successful response with a list of providers.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Provider'
+        '500':
+          description: Internal server error.
+    post:
+      summary: Create a new healthcare provider
+      tags:
+        - Providers
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - firstName
+                - lastName
+                - specialty
+              properties:
+                firstName:
+                  type: string
+                  example: Dr. Sarah
+                lastName:
+                  type: string
+                  example: Doe
+                specialty:
+                  type: string
+                  example: Dermatology
+                contactNumber:
+                  type: string
+                  example: 555-222-3333
+                email:
+                  type: string
+                  example: sarah.doe@example.com
+      responses:
+        '201':
+          description: Provider created successfully.
+        '400':
+          description: Missing required fields.
+  /providers/{id}:
+    get:
+      summary: Get a specific healthcare provider by ID
+      description: Retrieves the detailed information of a single provider by ID.
+      tags:
+        - Providers
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            example: prov1
+          description: Provider ID
+      responses:
+        '200':
+          description: Provider found successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Provider'
+        '404':
+          description: Provider not found.
+    put:
+      summary: Update a provider's information
+      tags:
+        - Providers
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            example: prov1
+          description: Provider ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Provider'
+      responses:
+        '200':
+          description: Provider updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Provider'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Provider not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      summary: Delete a healthcare provider
+      tags:
+        - Providers
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            example: prov1
+      responses:
+        '204':
+          description: Provider deleted successfully.
+        '404':
+          description: Provider not found.
+components:
+  schemas:
+    Appointment:
+      type: object
+      example:
+        id: app1
+        patientId: pat1
+        providerId: prov1
+        date: '2025-06-15T10:00:00Z'
+        type: Check-up
+        status: scheduled
+      properties:
+        id:
+          type: string
+        patientId:
+          type: string
+        providerId:
+          type: string
+        date:
+          type: string
+          format: date-time
+        type:
+          type: string
+        status:
+          type: string
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        code:
+          type: string
+    Patient:
+      type: object
+      example:
+        id: pat1
+        firstName: Frank
+        lastName: White
+        dateOfBirth: '1985-03-20'
+        contactNumber: 555-555-555
+        email: frank@aol.com
+      properties:
+        id:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        dateOfBirth:
+          type: string
+          format: date
+        contactNumber:
+          type: string
+        email:
+          type: string
+      required:
+        - id
+        - firstName
+        - lastName
+        - dateOfBirth
+    Provider:
+      type: object
+      example:
+        id: prov1
+        firstName: Dr. Emily
+        lastName: White
+        specialty: General Practice
+        contactNumber: 555-777-8888
+        email: emily.w@example.com
+      properties:
+        id:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        specialty:
+          type: string
+        contactNumber:
+          type: string
+        email:
+          type: string
+      required:
+        - id
+        - firstName
+        - lastName
+        - specialty
+tags:
+  - name: Appointments
+    description: API for managing patient appointments and scheduling workflows.
+  - name: Patients
+    description: API for managing patient information.
+  - name: Providers
+    description: API for managing healthcare provider information.
