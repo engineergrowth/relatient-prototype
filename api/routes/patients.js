@@ -25,7 +25,7 @@ let patients = [
  * @swagger
  * tags:
  *   - name: Patients
- *     description: API for managing patient information.
+ *     description: Endpoints for managing patient information.
  */
 
 /**

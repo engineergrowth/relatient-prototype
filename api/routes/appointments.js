@@ -30,7 +30,7 @@ let appointments = [
  * @swagger
  * tags:
  *   - name: Appointments
- *     description: API for managing patient appointments and scheduling workflows.
+ *     description: Endpoints for managing patient appointments and scheduling workflows.
  */
 
 /**

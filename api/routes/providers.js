@@ -25,7 +25,7 @@ let providers = [
  * @swagger
  * tags:
  *   - name: Providers
- *     description: API for managing healthcare provider information.
+ *     description: Endpoints for managing healthcare provider information.
  */
 
 /**
